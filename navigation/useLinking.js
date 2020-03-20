@@ -8,6 +8,9 @@ export default function(containerRef) {
       Root: {
         path: 'root',
         screens: {
+          Login: 'login',
+          Signup: 'signup',
+          ForgotPassword: 'forgotPassword',
           Home: 'home'
         },
       },

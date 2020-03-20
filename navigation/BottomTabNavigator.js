@@ -2,6 +2,9 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import TestScreen from '../screens/TestScreen';
+import SignupScreen from '../screens/auth/SignupScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
+// import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 
 
 const BottomTab = createBottomTabNavigator();
@@ -23,6 +26,15 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
         }}
       />
+      <BottomTab.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          title: 'Login',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
+        }}
+      />
+                                                
     </BottomTab.Navigator>
   );
 }

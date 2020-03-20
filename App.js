@@ -9,6 +9,7 @@ import ApiKeys from './constants/ApiKeys';
 import * as firebase from 'firebase';
 
 import BottomTabNavigator from './navigation/BottomTabNavigator';
+import RootNavigator from './navigation/RootNavigator';
 import useLinking from './navigation/useLinking';
 
 const Stack = createStackNavigator();
@@ -18,11 +19,18 @@ export default function App(props) {
   const [initialNavigationState, setInitialNavigationState] = React.useState();
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
+  const [isAuthenticationReady, setAuthenticationReady] = React.useState(false);
+  const [isAuthenticated, setAuthenticated] = React.useState(false);
 
   // Intialize firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(ApiKeys.FirebaseConfig);
   }
+
+  firebase.auth().onAuthStateChanged((user) => {
+    setAuthenticationReady(true);
+    setAuthenticated(!!user);
+  })
 
 
   // Load any resources or data that we need prior to rendering the app
@@ -51,17 +59,23 @@ export default function App(props) {
     loadResourcesAndDataAsync();
   }, []);
 
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
+  if (!isLoadingComplete && !isAuthenticationReady && !props.skipLoadingScreen) {
     return null;
   } else {
     return (
       <View style={styles.container}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+        <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
+          <Stack.Navigator>
+            {(isAuthenticated) ? <Stack.Screen name="Root" component={BottomTabNavigator} /> : <Stack.Screen name="Root" component={RootNavigator} />}
+          </Stack.Navigator>
+        </NavigationContainer>
+
+        {/* {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
         <NavigationContainer ref={containerRef} initialState={initialNavigationState}>
           <Stack.Navigator>
             <Stack.Screen name="Root" component={BottomTabNavigator} />
           </Stack.Navigator>
-        </NavigationContainer>
+        </NavigationContainer> */}
       </View>
     );
   }
